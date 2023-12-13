@@ -1,0 +1,240 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Quiz Application</title>
+    <link rel="stylesheet" href="style.css">
+</head> 
+<body> 
+    <div id="quiz-container"> 
+        <h1>Quiz</h1>
+        <p id="sh">Take your quiz here below</p>
+
+        <div class="quizcontent">
+            <!-- Display the question -->
+            <h2 id="question">Here's the question</h2>
+
+            <!-- Container for answer buttons -->
+            <div id="answer-buttons">
+                <!-- Answer buttons will be dynamically added here -->
+            </div>
+
+            <!-- Display the timer -->
+            <p id="timer"></p>
+
+            <!-- Next button for moving to the next question -->
+            <button id="next-btn" class="click1" onclick="handleNextButton()">Next</button>
+
+            <!-- Restart button to restart the quiz -->
+             <button id="restart-btn" class="click1" onclick="restartQuiz()" style="display: none;">Restart Quiz</button>
+
+        </div>
+    </div>
+
+    
+</body>
+</html>
+
+       <script> 
+            const questions = [
+    {
+        question: "Who invented the World Wide Web?",
+        answers: [
+            { text: "Tim Berners-Lee", correct: true},
+            { text: "Lebron James", correct: false},
+            { text: "Smokey Nagata", correct: false},
+            { text: "Abraham Lincoln", correct: false},
+        ]
+    },
+    {
+        question: "Who created javascript and when?",
+        answers: [
+            { text: "Charles Barkley in 1801", correct: false},
+            { text: "Brendan Eich in 1995", correct: true},
+            { text: "Bill Gates in 2002", correct: false},
+            { text: "Barack Obama in 1996", correct: false},
+        ]
+    },
+    {
+        question: "what happens when you swallow a gum?",
+        answers: [
+            { text: "Your body can digest it", correct: false},
+            { text: "Your breath will never be bad again", correct: false},
+            { text: "You will be fine, trust me (do not trust)", correct: false},
+            { text: "You will have intestinal problems", correct: true},
+        ]
+    },
+    {
+        question: "How many bones are in the human body?",
+        answers: [
+            { text: "1029", correct: false},
+            { text: "207", correct: false},
+            { text: "206", correct: true},
+            { text: "305", correct: false},
+        ]
+    },
+    {
+        question: "What does 'USB' stand for??",
+        answers: [
+            { text: "Universal Serial Bus", correct: true},
+            { text: "University of San Beda", correct: false},
+            { text: "Undo, Save, Back-up", correct: false},
+            { text: "All of the above", correct: false},
+        ]
+    }
+];
+
+const questionElement = document.getElementById("question");
+const answerButtons = document.getElementById("answer-buttons");
+const nextButton = document.getElementById("next-btn");
+const timerElement = document.getElementById("timer");
+
+let currentQuestionIndex = 0;
+let score = 0;
+let timer;
+
+function startQuiz(){
+    currentQuestionIndex = 0;
+    score = 0;
+    nextButton.innerHTML = "Next";
+    showQuestion();
+}
+
+function showQuestion(){
+        resetState();
+        let currentQuestion = questions[currentQuestionIndex];
+        questionElement.innerHTML = currentQuestion.question;
+
+        resetTimer();
+        startTimer(20);
+
+        currentQuestion.answers.forEach(answer => {
+            const button = document.createElement("button");
+
+            button.innerHTML = answer.text;
+            button.classList.add("btn");
+            answerButtons.appendChild(button);
+
+            if(answer.correct){
+                button.dataset.correct = answer.correct;
+            }
+            button.addEventListener("click", selectAnswer);
+        });
+}
+
+function resetTimer() {
+    clearInterval(timer);
+    timerElement.textContent = "";
+}
+
+function startTimer(duration) {
+    let timeLeft = duration;
+    timerElement.textContent = `Time Left: ${timeLeft}s`;
+
+    timer = setInterval(() => {
+      if (timeLeft <= 1) {
+        clearInterval(timer);
+        handleTimeout(); 
+      }
+      
+      timeLeft--;
+      timerElement.textContent = `Time Left: ${timeLeft}s`;
+    }, 1000);
+}
+
+function handleTimeout() {
+    const selectedBtn = Array.from(answerButtons.children).find(button => button.classList.contains("selected"));
+
+    if (!selectedBtn) {
+       
+        const incorrectButton = Array.from(answerButtons.children).find(button => button.dataset.correct === "true");
+        incorrectButton.classList.add("incorrect");
+    }
+
+    Array.from(answerButtons.children).forEach(button => {
+        button.disabled = true;
+    });
+
+    nextButton.style.display = "block";
+}
+
+
+function resetState(){
+    nextButton.style.display = "none";
+    while(answerButtons.firstChild){
+        answerButtons.removeChild(answerButtons.firstChild);
+    }
+}
+
+function selectAnswer(e){
+    const selectedBtn = e.target;
+    const isCorrect = selectedBtn.dataset.correct === "true";
+
+    if(isCorrect){
+        selectedBtn.classList.add("correct");
+        score++;
+    }else{
+        selectedBtn.classList.add("incorrect");
+    }
+
+    Array.from(answerButtons.children).forEach(button => {
+        if(button.dataset.correct === "true"){
+            button.classList.add("correct");
+        }
+        button.disabled = true;
+    });
+    
+    nextButton.style.display = "block";
+}
+
+
+    function showFeedback(isCorrect) {
+        const feedbackElement = document.createElement("p");
+        const currentQuestion = questions[currentQuestionIndex];
+        feedbackElement.textContent = isCorrect ? "Correct!" : `Incorrect. The correct answer is: ${getCorrectAnswer(currentQuestion)}`;
+        feedbackElement.classList.add(isCorrect ? "correct" : "incorrect");
+        document.querySelector(".quizcontent").appendChild(feedbackElement);
+    }
+
+    function getCorrectAnswer(question) {
+        const correctAnswer = question.answers.find(answer => answer.correct);
+        return correctAnswer.text;
+}
+
+function handleNextButton() {
+    currentQuestionIndex++;
+    
+    if (currentQuestionIndex < questions.length) {
+        showQuestion();
+    } else {
+        showResult(); // Call showResult only when all questions are answered
+    }
+}
+
+function showResult() {
+    // Check if the result is already displayed
+    const existingResult = document.querySelector(".result");
+    if (!existingResult) {
+        resetState(); // Clear the question and answer buttons
+        const resultElement = document.createElement("p");
+        resultElement.textContent = `Your score is ${score} out of ${questions.length}!`;
+        resultElement.classList.add("result");
+        document.querySelector(".quizcontent").appendChild(resultElement);
+
+        // Reset the current question index and score
+        currentQuestionIndex = 0;
+        score = 0;
+
+        // Display the restart button
+        document.getElementById("restart-btn").style.display = "block";
+        
+        // Set the click event for the restart button
+        document.getElementById("restart-btn").onclick = startQuiz;
+    }
+}
+
+
+
+startQuiz();
+       </script> 

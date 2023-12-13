@@ -1,0 +1,130 @@
+body {
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(45deg, #d2001a, #7462ff, #f48e21, #23d5ab);
+    background-size: 300% 300%;
+    animation: color 12s ease-in-out infinite;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
+@keyframes color {
+    0%{
+        background-position: 0 50%;
+
+    }
+
+    50%{
+        background-position: 100 50%;
+
+    }
+
+    100%{
+        background-position: 0 50%;
+
+    }
+}
+
+#quiz-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+#sh{
+    padding-left: 200px;
+}
+
+.quizcontent {
+    text-align: center;
+}
+
+#question {
+    color: #333;
+}
+
+#answer-buttons {
+    margin-top: 20px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: darkcyan;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: darkgreen
+}
+
+.correct {
+    background-color: #4CAF50 !important;
+}
+
+.incorrect {
+    background-color: #e53935 !important;
+}
+
+#timer {
+    margin-top: 20px;
+    color: #333;
+    font-size: 18px;
+}
+
+#next-btn {
+    display: none;
+    margin-top: 20px;
+    background-color: #2196F3;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#next-btn:hover {
+    background-color: #0b7dda;
+}
+
+#next-btn:disabled {
+    background-color: #ddd;
+    color: #666;
+    cursor: not-allowed;
+}
+
+#restart-btn {
+    display: block; 
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #e74c3c; 
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#restart-btn:hover {
+    background-color: #c0392b; 
+}
+
+.result {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
